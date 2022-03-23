@@ -20,8 +20,6 @@ export const CategoriesProvider = ({ children }) => {
     useEffect(() => { //Don't define async function directly when calling useEffect(). 
         const getCategoriesMap = async () => { //Instead - create an anonomous async function within useEffect.
             const categoryMap = await getCategoriesAndDocuments(); //Initialize external firebase utils async function.
-            console.log(categoryMap);
-            
             setCategoriesMap(categoryMap);
         }
         getCategoriesMap(); //Invoke internal async function after external async function is initialized.
