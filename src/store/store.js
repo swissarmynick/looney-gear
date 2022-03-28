@@ -1,25 +1,28 @@
 import { compose, createStore, applyMiddleware} from 'redux';
-// import logger from 'redux-logger';
-
+import { persistReducer, persistStore } from  'redux-persist';
+import storage from 'redux-persist/lib/storage';
 import { rootReducer } from './root-reducer';
+import logger from 'redux-logger';
 
-const loggerMiddleware = (store) => (next) => (action) => {
-    if(!action.type) {
-        return next(action);
-    }
+// import { loggerMiddleware } from './middleware/logger';
+// const middleWares = [loggerMiddleware];
 
-    console.log('action.type', action.type);
-    console.log('action.payload', action.payload);
-    console.log('currentState', store.getState());
-
-    next(action);
-
-    console.log('next state', store.getState());
+const persistConfig = {
+    key: 'root',
+    storage,
+    blacklist: ['user'],
 }
 
-// const middleWares = [logger];
-const middleWares = [loggerMiddleware];
+const persistedReducer = persistReducer(persistConfig, rootReducer)
 
-const composedEnhancers = compose(applyMiddleware(...middleWares));
+//Don't log while in production. Also filter out 'false' value generated when in production.
+const middleWares = [process.env.NODE_ENV !== 'production' && logger].filter(Boolean); 
 
-export const store = createStore(rootReducer, undefined, composedEnhancers)
+//Use Redux DevTools chrome extension when it's available and we're not in production. Otherwise use compose directly from redux.
+const composedEnhancer = (process.env.NODE_ENV !== 'production' && window && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
+
+const composedEnhancers = composedEnhancer(applyMiddleware(...middleWares));//now using composedEnhancer instead of compose.
+
+export const store = createStore(persistedReducer, undefined, composedEnhancers); //now using persistedReducer instead of rootReducer.
+
+export const persistor = persistStore(store);
