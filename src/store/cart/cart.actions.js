@@ -1,6 +1,7 @@
 import { createAction } from "../../utils/reducer/reducer.utils";
 import { CART_ACTION_TYPES } from "./cart.types";
 
+//HELPER FUNCTIONS
 const addCartItem = (cartItems, productToAdd) => {
     const existingCartItem = cartItems.find((cartItem) => cartItem.id === productToAdd.id);
 
@@ -38,6 +39,7 @@ const clearCartItem = (cartItems, cartItemToClear) => {
     return cartItems.filter(cartItem => cartItem.id !== cartItemToClear.id);
 }
 
+//DISPATCHABLE ACTION CREATORS
 export const setIsCartOpen = (bool) => 
     createAction(CART_ACTION_TYPES.SET_IS_CART_OPEN, bool);
 

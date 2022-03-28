@@ -13,8 +13,8 @@ const CategoryPreview = ({ title, products }) => {
             <div className='preview'>
                 {
                     products
-                        .filter((_, index) => index < 4) //the underscore means we're not going to use the item itself - just using the index.
-                        .map(product => (
+                        .filter((_, index) => index < 4) //the underscore means we're not going to use the item/product itself - just using the index.
+                        .map(product => ( //now we'll use the product.
                             <ProductCard key={product.id} product={product} />
                         ))
                 }

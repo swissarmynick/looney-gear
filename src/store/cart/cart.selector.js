@@ -1,7 +1,11 @@
 import { createSelector } from "reselect";
 
-const selectCartReducer = state => state.cart;
+//SLICE EXTRACTOR
+//Extract cart 'slice' of root-reducer.js
+//useSelector() calls provide redux state object.
+const selectCartReducer = state => state.cart; 
 
+//MEMOIZED SELECTORS
 export const selectIsCartOpen = createSelector(
     [selectCartReducer],
     (cart) => cart.isCartOpen
@@ -12,6 +16,7 @@ export const selectCartItems = createSelector(
     (cart) => cart.cartItems
 )
 
+//LOGICAL SELECTORS for useSelector() calls.
 export const selectCartCount = createSelector(
     [selectCartItems],
     (cartItems) => cartItems.reduce((total, cartItem) => total + cartItem.quantity, 0)

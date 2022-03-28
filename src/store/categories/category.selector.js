@@ -1,9 +1,8 @@
 import { createSelector } from "reselect";
 
-const selectCategoryReducer = (state) => { //I believe state is available because useSelector(selectCategoriesMap) is called within the component. See category.component.jsx
+const selectCategoryReducer = (state) => { //I believe state is available because useSelector(selectCategoriesMap) is called within the component. Redux 'state' is the only argument for useSelector(). See category.component.jsx
     return state.categories;
 }
-
 
 export const selectCategories = createSelector(
     [selectCategoryReducer], //if nothing changed with selectCategoryReducer (categories) above, don't re-render.
