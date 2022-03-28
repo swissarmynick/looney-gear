@@ -63,25 +63,11 @@ export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => 
 export const getCategoriesAndDocuments = async () => {
     const collectionRef = collection(db, 'categories');
 
-    const q = query(collectionRef); //retuns an object so we can grab snapshots
+    const q = query(collectionRef);
 
-    const querySnapshot = await getDocs(q); //fetch document snapshots
+    const querySnapshot = await getDocs(q); 
 
-    //Calling .docs method provides an array of individual documents. The snapshots are the actual data of each document.
-    const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
-        
-        //Destruct the values of each document snapshot. 
-        const { title, items } = docSnapshot.data();
-
-        //Update the accumulator (initial empty object) as each snapshot is traversed. 
-        //Extract the title of each snapshot to provide as the object key. 
-        //Set values for each key (documents of the categories collection) equal to the array of "items" within each document. 
-        acc[title.toLowerCase()] = items; 
-        
-        return acc; //return accumulator object after adding each document->snapshot->title/items as the object's keys(title)->values(items).
-    }, {}); //inital value of reducer function is an empty object
-
-    return categoryMap;
+    return querySnapshot.docs.map(docSnapshot => docSnapshot.data())
 }
 
 export const createUserDocumentFromAuth = async (userAuth, additionalInformation = {}) => {
