@@ -37,7 +37,7 @@ initializeApp(firebaseConfig);
 const googleProvider = new GoogleAuthProvider();
 
 googleProvider.setCustomParameters({
-   prompt: "select_account" 
+   prompt: "select_account"
 });
 
 export const auth = getAuth();
@@ -46,6 +46,7 @@ export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider)
 
 export const db = getFirestore();
 
+// BATCH UPLOAD HELPER
 export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => { //objectsToAdd is shop-data array
     const collectionRef = collection(db, collectionKey); //get ref of existing or non-existing collection
     
@@ -60,6 +61,7 @@ export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => 
     console.log('Batch Commit Complete');
 }
 
+// CATEGORIES
 export const getCategoriesAndDocuments = async () => {
     const collectionRef = collection(db, 'categories');
 
@@ -70,6 +72,7 @@ export const getCategoriesAndDocuments = async () => {
     return querySnapshot.docs.map(docSnapshot => docSnapshot.data())
 }
 
+// USERS
 export const createUserDocumentFromAuth = async (userAuth, additionalInformation = {}) => {
     if (!userAuth) return;
 
@@ -91,7 +94,7 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInformation
             console.log('Error creating new user', error.message)
         }
     }
-    return userDocRef;
+    return userSnapshot;
 };
 
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
@@ -106,4 +109,15 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
 
 export const signOutUser = async () => await signOut(auth);
 
-export const onAuthStateChangedListener = (callback) => onAuthStateChanged(auth, callback);
+export const getCurrentUser = () => {
+    return new Promise((resolve, reject) => {
+        const unsubscribe = onAuthStateChanged( // We get back 'unsubscribe' from firebase onAuthStateChanged() 
+            auth, // Still pass in auth.
+            (userAuth) => { // Still supply a callback. We can use userAuth that is received from onAuthStateChanged()
+                unsubscribe(); // It doesn't matter if we receive a user or not - just immediately unsubscribe
+                resolve(userAuth); // Close the listener to avoid memory leak. Otherwise, listener would remain active.
+            }, 
+            reject // Third argument for onAuthStateChanged() is a callback for handling errors while fetching userAuth.
+        ); 
+    });
+};
